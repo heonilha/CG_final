@@ -931,10 +931,26 @@ void drawGrid(glm::mat4 view, glm::mat4 projection, const glm::vec3& lightPos) {
 }
 
 void display() {
+    glViewport(0, 0, g_windowWidth, g_windowHeight);
+
+    // 타이틀 화면은 배경만 초기화하고 텍스트만 출력
+    if (g_gameState == GameState::TITLE) {
+        glClearColor(0.08f, 0.08f, 0.12f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        float centerX = g_windowWidth * 0.5f;
+        float centerY = g_windowHeight * 0.5f;
+        renderText(centerX - 120.0f, centerY + 40.0f, "3D PAC-MAN (TEMP)");
+        renderText(centerX - 150.0f, centerY - 10.0f, "PRESS ENTER OR SPACE TO START");
+        renderText(centerX - 100.0f, centerY - 40.0f, "Q : QUIT");
+        glutSwapBuffers();
+        return;
+    }
+
     glm::vec3 lightPos = g_cameraPos;
     glUniform3fv(g_lightPosLoc, 1, glm::value_ptr(lightPos));
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glViewport(0, 0, g_windowWidth, g_windowHeight);
 
     glm::ivec2 gridPos = getGridCoord(g_playerPosX, g_playerPosZ);
     float tileY = 0.0f;
@@ -1013,11 +1029,6 @@ void display() {
     float centerY = g_windowHeight * 0.5f;
 
     switch (g_gameState) {
-    case GameState::TITLE:
-        renderText(centerX - 120.0f, centerY + 40.0f, "3D PAC-MAN (TEMP)");
-        renderText(centerX - 150.0f, centerY - 10.0f, "PRESS ENTER OR SPACE TO START");
-        renderText(centerX - 100.0f, centerY - 40.0f, "Q : QUIT");
-        break;
     case GameState::PLAYING:
     {
         std::string hud = "SCORE: " + std::to_string(g_score) + "   LIVES: " + std::to_string(g_lives);
