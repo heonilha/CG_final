@@ -1,11 +1,18 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform float clipSign;
+
+out vec3 FragPos;
+
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    vec4 worldPosition = model * vec4(aPos, 1.0);
+    FragPos = worldPosition.xyz;
+
+    gl_Position = projection * view * worldPosition;
     gl_ClipDistance[0] = clipSign * aPos.y;
 }
